@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Agri AI</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="logo"><i class="fas fa-seedling"></i> <span>AgriAI</span></div>
+            <nav class="menu">
+                <button class="menu-btn active" onclick="showSection('soil-section', this)"><i class="fas fa-flask"></i> <span id="menu-soil">Soil Analysis</span></button>
+                <button class="menu-btn" onclick="showSection('history-section', this)"><i class="fas fa-history"></i> <span id="menu-hist">History</span></button>
+                <button class="menu-btn" onclick="showSection('chat-section', this)"><i class="fas fa-robot"></i> <span id="menu-chat">Chatbot</span></button>
+            </nav>
+            <div class="lang-select">
+                <label id="lbl-lang">Language</label>
+                <select id="language" onchange="changeLanguage()">
+                    <option value="en">English</option>
+                    <option value="hi">Hindi</option>
+                    <option value="te">Telugu</option>
+                    <option value="ta">Tamil</option>
+                </select>
+            </div>
+        </aside>
+
+        <main class="content">
+            <header>
+                <h2 id="header-title">Smart Agriculture Platform</h2>
+                <div class="status-dot" id="server-status" title="Connection Status"></div>
+            </header>
+
+            <section id="soil-section" class="active-section">
+                <div class="card">
+                    <h3 id="title-soil">Soil Analysis</h3>
+                    <div class="grid-form">
+                        <div class="input-group">
+                            <label id="lbl-state">State</label>
+                            <select id="s-state">
+                                <option value="Odisha">Odisha</option>
+                                <option value="Punjab">Punjab</option>
+                                <option value="Tamil Nadu">Tamil Nadu</option>
+                                <option value="Andhra Pradesh">Andhra Pradesh</option>
+                                <option value="Telangana">Telangana</option>
+                                <option value="Maharashtra">Maharashtra</option>
+                                <option value="Karnataka">Karnataka</option>
+                                <option value="Gujarat">Gujarat</option>
+                            </select>
+                        </div>
+                        <div class="input-group"><label id="lbl-dist">District</label><input type="text" id="s-district" placeholder="Enter District"></div>
+                        <div class="input-group"><label id="lbl-soil">Soil Type</label>
+                            <select id="s-soil">
+                                <option value="Alluvial">Alluvial</option>
+                                <option value="Black">Black</option>
+                                <option value="Red">Red</option>
+                                <option value="Loamy">Loamy</option>
+                                <option value="Sandy">Sandy</option>
+                            </select>
+                        </div>
+                        <div class="input-group"><label id="lbl-n">Nitrogen (N)</label><input type="number" id="s-n" placeholder="120"></div>
+                        <div class="input-group"><label id="lbl-p">Phosphorus (P)</label><input type="number" id="s-p" placeholder="40"></div>
+                        <div class="input-group"><label id="lbl-k">Potassium (K)</label><input type="number" id="s-k" placeholder="60"></div>
+                        <div class="input-group"><label id="lbl-ph">pH Level</label><input type="number" id="s-ph" placeholder="6.5"></div>
+                        <div class="input-group"><label id="lbl-temp">Temperature</label><input type="number" id="s-temp" placeholder="30"></div>
+                        <div class="input-group"><label id="lbl-rain">Rainfall</label><input type="number" id="s-rain" placeholder="1000"></div>
+                        <div class="input-group"><label id="lbl-humid">Humidity</label><input type="number" id="s-humid" placeholder="50"></div>
+                    </div>
+                    <div class="actions">
+                        <button class="btn-primary" onclick="predictSoil()" id="btn-predict1">Analyze & Predict</button>
+                        <button class="btn-voice" onclick="startVoice('soil')"><i class="fas fa-microphone"></i></button>
+                    </div>
+                </div>
+            </section>
+
+            <section id="history-section" class="hidden">
+                <div class="card">
+                    <h3 id="title-hist">Historical Trends</h3>
+                    <div class="grid-form">
+                        <div class="input-group"><label id="lbl-h-state">State</label><input type="text" id="h-state" placeholder="State"></div>
+                        <div class="input-group"><label id="lbl-h-soil">Soil Type</label>
+                            <select id="h-soil">
+                                <option value="Alluvial">Alluvial</option>
+                                <option value="Loamy">Loamy</option>
+                                <option value="Red">Red</option>
+                                <option value="Black">Black</option>
+                            </select>
+                        </div>
+                        <div class="input-group"><label id="lbl-prev">Previous Crop</label><input type="text" id="h-prev" placeholder="e.g. Rice"></div>
+                    </div>
+                    <div class="actions">
+                        <button class="btn-primary" onclick="predictHistory()" id="btn-predict2">Predict Next Crop</button>
+                    </div>
+                </div>
+            </section>
+
+            <section id="chat-section" class="hidden">
+                <div class="chat-container">
+                    <div class="chat-history" id="chat-box"><div class="msg bot" id="bot-welcome">Hello! Ask me about crops.</div></div>
+                    <div class="chat-input-area">
+                        <input type="text" id="chat-input" placeholder="Type question..." onkeypress="if(event.key==='Enter') sendChat()">
+                        <button onclick="sendChat()">Send</button>
+                    </div>
+                </div>
+            </section>
+
+            <div id="result-card" class="result-card hidden">
+                <h3 id="res-title">Result</h3>
+                <div class="res-grid">
+                    <div class="res-item"><span id="lbl-crop">Crop</span><h4 id="res-crop">--</h4></div>
+                    <div class="res-item"><span id="lbl-yield">Yield</span><h4 id="res-yield">--</h4></div>
+                    <div class="res-item"><span id="lbl-fert">Fertilizer</span><h4 id="res-fert">--</h4></div>
+                </div>
+                <button class="btn-voice" onclick="speakResult()" id="btn-listen">Listen</button>
+            </div>
+        </main>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
